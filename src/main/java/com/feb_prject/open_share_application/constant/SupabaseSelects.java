@@ -1,4 +1,4 @@
-package com.feb_prject.open_share_application.constants;
+package com.feb_prject.open_share_application.constant;
 
 public final class SupabaseSelects {
 

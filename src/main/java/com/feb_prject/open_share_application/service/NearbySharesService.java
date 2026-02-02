@@ -1,10 +1,12 @@
 package com.feb_prject.open_share_application.service;
 
 
-import com.feb_prject.open_share_application.constants.SupabaseSelects;
+import com.feb_prject.open_share_application.constant.SupabaseSelects;
+import com.feb_prject.open_share_application.exception.SupabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -39,8 +41,14 @@ public class NearbySharesService {
                         "radius_meters", radius
                 ))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                })
+                .onStatus(
+                        HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .map(body -> new SupabaseException(
+                                        "Supabase RPC failed: " + body
+                                ))
+                )
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                 .block();
     }
 
