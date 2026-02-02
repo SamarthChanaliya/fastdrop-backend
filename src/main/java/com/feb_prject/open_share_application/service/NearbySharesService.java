@@ -1,6 +1,7 @@
 package com.feb_prject.open_share_application.service;
 
 
+import com.feb_prject.open_share_application.constants.SupabaseSelects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +25,13 @@ public class NearbySharesService {
             String jwt, double lat, double lng, double radius) {
 
         return supabaseWebClient.post()
-                .uri("/rpc/nearby_shares")
+                .uri(uriBuilder -> uriBuilder
+                        .path("/rpc/nearby_shares")
+                        .queryParam("select", SupabaseSelects.NEARBY_SHARES)
+                        .queryParam("order", "created_at.desc")
+                        .build())
+
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
-                .header(HttpHeaders.ACCEPT, "application/json")
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .bodyValue(Map.of(
                         "lat", lat,
@@ -34,7 +39,17 @@ public class NearbySharesService {
                         "radius_meters", radius
                 ))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
+                .block();
+    }
+
+    public List<Map<String, Object>> getAllShares() {
+        return supabaseWebClient.get()
+                .uri("/shares")
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                })
                 .block();
     }
 }

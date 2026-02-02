@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -27,6 +28,7 @@ public class SupabaseConfig {
         return builder
                 .baseUrl("https://rjsgaildagzjvmemaqbc.supabase.co/rest/v1")
                 .defaultHeader("apiKey", this.getKey())
+                .defaultHeader(HttpHeaders.ACCEPT, "application/json")
                 .build();
     }
 }

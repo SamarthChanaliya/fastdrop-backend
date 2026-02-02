@@ -35,4 +35,9 @@ public class SharesController {
     public Map<String, String> getPing() {
         return Map.of("Status", "OK");
     }
+
+    @GetMapping("/all")
+    public List<Map<String ,Object>> allShares(){
+        return service.getAllShares();
+    }
 }
