@@ -1,7 +1,5 @@
 package com.feb_prject.open_share_application.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

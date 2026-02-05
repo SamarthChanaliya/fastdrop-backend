@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.feb_prject.open_share_application.constant.SupabaseSelects;
 import com.feb_prject.open_share_application.dto.session.SessionCreateRequestDTO;
 import com.feb_prject.open_share_application.dto.session.SessionResponseDTO;
-import com.feb_prject.open_share_application.exception.SupabaseException;
+import com.feb_prject.open_share_application.exception.supabase.SupabaseErrorHandler;
 import com.feb_prject.open_share_application.utils.JoinCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,10 +38,7 @@ public class SessionsService {
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .map(body -> new SupabaseException(
-                                        "Session was not created." + body
-                                ))
+                        SupabaseErrorHandler.error("Session was not created.")
                 )
                 .bodyToMono(SessionResponseDTO.class)
                 .block();
@@ -64,8 +61,7 @@ public class SessionsService {
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .map(body -> new SupabaseException("Supabase RPC failed: " + body))
+                        SupabaseErrorHandler.error("Supabase RPC failed: ")
                 )
                 .bodyToFlux(SessionResponseDTO.class)
                 .collectList()
