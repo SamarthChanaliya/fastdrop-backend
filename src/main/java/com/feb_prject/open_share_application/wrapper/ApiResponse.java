@@ -1,9 +1,11 @@
 package com.feb_prject.open_share_application.wrapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private boolean success;
@@ -22,6 +24,10 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>(false, message, null);
+    }
+
+    public static <T> ApiResponse<T> error(String message, T errors) {
+        return new ApiResponse<>(false, message, errors);
     }
 
 }

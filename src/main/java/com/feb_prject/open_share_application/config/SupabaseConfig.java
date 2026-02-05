@@ -18,17 +18,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class SupabaseConfig {
     private String url;
     private String key;
+    private String rest;
 
 
     @Bean
     public WebClient supabaseWebClient(WebClient.Builder builder) {
-//        System.out.println("SUPABASE_KEY length: " +
-//                (this.key != null ? this.key.length() : "null"));
 
         return builder
-                .baseUrl("https://rjsgaildagzjvmemaqbc.supabase.co/rest/v1")
+                .baseUrl(this.getRest())
                 .defaultHeader("apiKey", this.getKey())
                 .defaultHeader(HttpHeaders.ACCEPT, "application/json")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .build();
     }
 }

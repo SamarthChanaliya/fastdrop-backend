@@ -30,5 +30,12 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Projet ###
+API_Refrence.pdf
+
+### Old model ###
+NearbySharesService.java
+SharesController.java
+
 ### VS Code ###
 .vscode/
