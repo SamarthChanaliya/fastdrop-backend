@@ -31,7 +31,6 @@ import java.util.Map;
 @Service
 public class SessionsService {
 
-    @Autowired
     private final WebClient supabaseWebClient;
 
     public SessionsService(WebClient supabaseWebClient, ObjectMapper objectMapper) {
@@ -51,7 +50,7 @@ public class SessionsService {
                 .bodyToMono(NearbySessionResponseDTO[].class)
                 .map(rows -> rows[0])
                 .retryWhen(Retry.max(3)
-                        .filter(throwable -> isDuplicateKeyError(throwable))
+                        .filter(this::isDuplicateKeyError)
                         .onRetryExhaustedThrow((spec, signal) -> signal.failure())
                 );
     }
@@ -90,6 +89,7 @@ public class SessionsService {
         map.put("radius_meters", createRequestDTO.getRadiusMeters());
         map.put("host_id", createRequestDTO.getHostId());
         map.put("requires_code", createRequestDTO.getRequiresCode());
+        map.put("sharing_enabled", createRequestDTO.getSharingEnabled());
         return map;
     }
 

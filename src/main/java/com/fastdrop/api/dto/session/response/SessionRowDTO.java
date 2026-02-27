@@ -12,5 +12,6 @@ public record SessionRowDTO(
         Boolean endedByHost,
         Integer distanceMeters,
         Integer sharesCount,
-        Boolean requiresCode
+        Boolean requiresCode,
+        Boolean sharingEnabled
 ) { }

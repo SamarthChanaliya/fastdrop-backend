@@ -13,11 +13,12 @@ public class SessionCreateRequestDTO {
 
     private String expiresAt;
 
+    @NotNull(message = "longitude can't be empty")
+    private Double lng;
+
     @NotNull(message = "latitude can't be empty")
     private Double lat;
 
-    @NotNull(message = "longitude can't be empty")
-    private Double lng;
 
     @Positive
     private Integer radiusMeters;
@@ -26,5 +27,7 @@ public class SessionCreateRequestDTO {
     private String hostId;
 
     private Boolean requiresCode = false;
+
+    private Boolean sharingEnabled = true;
 
 }
