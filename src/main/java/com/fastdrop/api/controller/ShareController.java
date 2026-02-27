@@ -1,5 +1,6 @@
 package com.fastdrop.api.controller;
 
+import com.fastdrop.api.dto.share.request.CodeShareCreateRequestDTO;
 import com.fastdrop.api.dto.share.request.TextShareCreateRequestDTO;
 import com.fastdrop.api.dto.share.response.ShareCreateRPCResponseDTO;
 import com.fastdrop.api.dto.share.response.ShareItemsRowDTO;
@@ -31,6 +32,23 @@ public class ShareController {
         String jwt = authHeader.substring(7);
         System.out.println("JWT: "+jwt);
         Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createdShare = shareservice.createTextShare(jwt,createTextShareRequestDTO);
+        return createdShare.map(
+                rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())
+        );
+    }
+
+    @PostMapping("/code")
+    public Mono<ApiResponse<ShareItemsRowDTO>> createCodeShare(
+            @RequestHeader("Authorization") String authHeader,
+            @Valid @RequestBody CodeShareCreateRequestDTO createCodeShareRequestDTO
+    ){
+        if (!authHeader.startsWith("Bearer ")){
+            throw new IllegalArgumentException("Invalid Authorization header");
+        }
+
+        String jwt = authHeader.substring(7);
+        System.out.println("JWT: "+jwt);
+        Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createdShare = shareservice.createCodeShare(jwt,createCodeShareRequestDTO);
         return createdShare.map(
                 rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())
         );

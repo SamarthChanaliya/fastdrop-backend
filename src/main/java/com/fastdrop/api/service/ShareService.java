@@ -3,6 +3,7 @@ package com.fastdrop.api.service;
 import ch.qos.logback.core.joran.spi.HttpUtil;
 import com.fastdrop.api.dto.session.response.NearbySessionResponseDTO;
 import com.fastdrop.api.dto.share.request.BaseShareCreateDTO;
+import com.fastdrop.api.dto.share.request.CodeShareCreateRequestDTO;
 import com.fastdrop.api.dto.share.request.TextShareCreateRequestDTO;
 import com.fastdrop.api.dto.share.response.ShareCreateRPCResponseDTO;
 import com.fastdrop.api.dto.share.response.ShareItemsRowDTO;
@@ -48,32 +49,27 @@ public class ShareService {
                 .bodyToMono(new ParameterizedTypeReference<ShareCreateRPCResponseDTO<ShareItemsRowDTO>>() {});
     }
 
-
-    private Mono<ShareItemsRowDTO> insertTextShareItem(
-            String jwt,
-            String shareId,
-            String title,
-            String content
+    public Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createCodeShare(String jwt, CodeShareCreateRequestDTO request
     ) {
 
-        Map<String, Object> body = Map.of(
-                "share_id", shareId,
-                "title", title,
-                "content_text", content,
-                "item_type", "text"
-        );
-
         return supabaseClient.post()
-                .uri("/share_items")
-                .header(HttpHeaders.AUTHORIZATION, "bearer " + jwt)
-                .header("Prefer", "return=representation")
-                .bodyValue(body)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/rpc/create_code_share")
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
+                .bodyValue(Map.of(
+                        "p_session_id", request.sessionId(),
+                        "p_user_id", request.createdBy(),
+                        "p_share_title", request.title(),
+                        "p_item_title", request.title(),
+                        "p_content_text", request.contentText(),
+                        "p_language", request.language()
+                ))
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
-                        SupabaseErrorHandler.error("Failed to create text share item")
+                        SupabaseErrorHandler.error("Supabase create Code share RPC failed: ")
                 )
-                .bodyToMono(ShareItemsRowDTO[].class)
-                .map(rows -> rows[0]);
+                .bodyToMono(new ParameterizedTypeReference<ShareCreateRPCResponseDTO<ShareItemsRowDTO>>() {});
     }
 }
