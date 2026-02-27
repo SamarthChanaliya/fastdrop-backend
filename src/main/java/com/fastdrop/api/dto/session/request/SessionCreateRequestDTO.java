@@ -1,9 +1,7 @@
 package com.fastdrop.api.dto.session.request;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.time.OffsetDateTime;
 
 @Data
 public class SessionCreateRequestDTO {

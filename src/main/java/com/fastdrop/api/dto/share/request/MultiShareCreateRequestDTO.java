@@ -1,12 +1,16 @@
 package com.fastdrop.api.dto.share.request;
 
+import com.fastdrop.api.pojo.Item;
 import jakarta.validation.constraints.NotBlank;
 
-public record LinkShareCreateRequestDTo(
+import java.util.ArrayList;
+import java.util.List;
+
+public record MultiShareCreateRequestDTO(
         @NotBlank String sessionId,
         @NotBlank String title,
         @NotBlank String shareType,
         @NotBlank String createdBy,
-        @NotBlank String contentText
-) {
+        List<Item> items
+        ) {
 }
