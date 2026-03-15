@@ -8,22 +8,17 @@ import java.time.Instant;
 @Data
 public class SessionUpdateRequestDTO {
 
-    private Long id;
+    private String  sessionId;
 
     @NotBlank(message = "Title is required")
-    @Size(max = 100)
     private String title;
 
-    @Future(message = "Expiry must be in the future")
-    private Instant expires_at;
+    private String  expiresAt;
 
     @Positive(message = "Radius must be positive")
-    private Integer radius_meters;
+    private Integer radiusMeters;
 
-    private Boolean is_active;
+    private Boolean requiresCode;
 
-    @NotNull(message = "Host ID is required")
-    private String host_id;
-
-    private String join_code;
+    private Boolean sharingEnabled;
 }

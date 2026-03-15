@@ -1,29 +1,25 @@
 package com.fastdrop.api.service;
 
+import com.fastdrop.api.dto.session.request.SessionUpdateRequestDTO;
 import com.fastdrop.api.dto.session.response.SessionRowDTO;
 import com.fastdrop.api.exception.SupabaseException;
 import com.fastdrop.api.utils.JoinCodeGenerator;
-import com.fastdrop.api.wrapper.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastdrop.api.dto.session.request.SessionCreateRequestDTO;
 import com.fastdrop.api.dto.session.request.SessionJoinValidationRequestDTO;
 import com.fastdrop.api.dto.session.response.SessionJoinValidationResponseDTO;
 import com.fastdrop.api.dto.session.response.NearbySessionResponseDTO;
 import com.fastdrop.api.exception.supabase.SupabaseErrorHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,5 +132,49 @@ public class SessionsService {
                 )
                 .bodyToMono(SessionRowDTO[].class)
                 .flatMap(rows -> Mono.justOrEmpty(rows.length > 0 ? rows[0] : null));
+    }
+
+    public Mono<SessionRowDTO> partialUpdateSession(String jwt, @Valid SessionUpdateRequestDTO sessionUpdateRequestDTO) {
+        return supabaseWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/sessions")
+                        .queryParam("id","eq." + sessionUpdateRequestDTO.getSessionId())
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
+                .header("Prefer", "return=representation")
+                .bodyValue(toSupabaseMap(sessionUpdateRequestDTO))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        SupabaseErrorHandler.error("Failed to update session").apply(response)
+                )
+                .bodyToMono(SessionRowDTO[].class)
+                .flatMap(rows -> {
+                    if (rows.length == 0) {
+                        return Mono.error(new RuntimeException("Session not found"));
+                    }
+                    return Mono.just(rows[0]);
+                });
+    }
+    private Map<String, Object> toSupabaseMap(SessionUpdateRequestDTO sessionUpdateRequestDTO) {
+        Map<String, Object> map = new HashMap<>();
+        if (sessionUpdateRequestDTO.getTitle() != null)
+            map.put("title", sessionUpdateRequestDTO.getTitle());
+
+        if (sessionUpdateRequestDTO.getExpiresAt() != null)
+            map.put("expires_at", sessionUpdateRequestDTO.getExpiresAt());
+
+        if (sessionUpdateRequestDTO.getRadiusMeters() != null) {
+            map.put("radius_meters", sessionUpdateRequestDTO.getRadiusMeters());
+        }
+
+        if (sessionUpdateRequestDTO.getRequiresCode() != null) {
+            map.put("requires_code", sessionUpdateRequestDTO.getRequiresCode());
+        }
+
+        if (sessionUpdateRequestDTO.getSharingEnabled() != null) {
+            map.put("sharing_enabled", sessionUpdateRequestDTO.getSharingEnabled());
+        }
+
+        return map;
     }
 }

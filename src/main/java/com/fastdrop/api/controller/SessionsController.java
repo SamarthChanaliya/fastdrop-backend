@@ -3,6 +3,7 @@ package com.fastdrop.api.controller;
 import com.fastdrop.api.dto.session.request.ActiveSessionRequestDTO;
 import com.fastdrop.api.dto.session.request.SessionCreateRequestDTO;
 import com.fastdrop.api.dto.session.request.SessionJoinValidationRequestDTO;
+import com.fastdrop.api.dto.session.request.SessionUpdateRequestDTO;
 import com.fastdrop.api.dto.session.response.SessionJoinValidationResponseDTO;
 import com.fastdrop.api.dto.session.response.NearbySessionResponseDTO;
 import com.fastdrop.api.dto.session.response.SessionRowDTO;
@@ -67,5 +68,19 @@ public class SessionsController {
         return sessionsService.getActiveSession(userId)
                 .map(active -> ApiResponse.success("Successfully fetched active session",active))
                 .defaultIfEmpty(ApiResponse.success("No active session found", null));
+    }
+
+    @PatchMapping("/edit")
+    public Mono<ApiResponse<SessionRowDTO>> updateSession(
+            @RequestHeader("Authorization") String authHeader,
+            @Valid @RequestBody SessionUpdateRequestDTO sessionUpdateRequestDTO){
+
+        if (!authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid Authorization header");
+        }
+        String jwt = authHeader.substring(7);
+        System.out.println("JWT: "+jwt);
+        return sessionsService.partialUpdateSession(jwt,sessionUpdateRequestDTO)
+                .map(nearbySessionResponseDTO -> ApiResponse.success("Session Updated successfully", nearbySessionResponseDTO));
     }
 }
