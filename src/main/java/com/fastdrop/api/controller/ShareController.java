@@ -46,7 +46,6 @@ public class ShareController {
         }
 
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createdShare = shareservice.createCodeShare(jwt,createCodeShareRequestDTO);
         return createdShare.map(
                 rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())
@@ -63,7 +62,6 @@ public class ShareController {
         }
 
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createdShare = shareservice.createLinkShare(jwt,createLinkShareRequestDTO);
         return createdShare.map(
                 rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())
@@ -80,7 +78,6 @@ public class ShareController {
         }
 
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         Mono<ShareCreateRPCResponseDTO<ShareItemsRowDTO>> createdShare = shareservice.createFileShare(jwt,createFileShareRequestDTO);
         return createdShare.map(
                 rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())
@@ -97,7 +94,6 @@ public class ShareController {
         }
 
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         Mono<ShareCreateRPCResponseDTO<String>> createdShare = shareservice.createMultiShare(jwt,createMultiShareRequestDTO);
         return createdShare.map(
                 rpcResponse -> ApiResponse.success(rpcResponse.message(), rpcResponse.data())

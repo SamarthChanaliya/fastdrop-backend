@@ -37,7 +37,6 @@ public class SessionsController {
             throw new IllegalArgumentException("Invalid Authorization header");
         }
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         return sessionsService.createSession(jwt,sessionCreateRequestDTO)
                 .map(nearbySessionResponseDTO -> ApiResponse.success("Session created successfully", nearbySessionResponseDTO));
     }
@@ -79,7 +78,6 @@ public class SessionsController {
             throw new IllegalArgumentException("Invalid Authorization header");
         }
         String jwt = authHeader.substring(7);
-        System.out.println("JWT: "+jwt);
         return sessionsService.partialUpdateSession(jwt,sessionUpdateRequestDTO)
                 .map(nearbySessionResponseDTO -> ApiResponse.success("Session Updated successfully", nearbySessionResponseDTO));
     }
