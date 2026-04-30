@@ -3,7 +3,6 @@ package com.fastdrop.api.dto.share.request;
 import com.fastdrop.api.pojo.Item;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record MultiShareCreateRequestDTO(

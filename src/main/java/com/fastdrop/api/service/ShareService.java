@@ -88,7 +88,7 @@ public class ShareService {
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
-                        SupabaseErrorHandler.error("Supabase create Code share RPC failed: ")
+                        SupabaseErrorHandler.error("Supabase create Link share RPC failed: ")
                 )
                 .bodyToMono(new ParameterizedTypeReference<ShareCreateRPCResponseDTO<ShareItemsRowDTO>>() {});
     }
